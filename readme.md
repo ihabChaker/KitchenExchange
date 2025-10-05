@@ -9,7 +9,7 @@ Plateforme web complète permettant la gestion et la découverte de recettes de 
 ## ⚙️ Technologies Utilisées
 
 - HTML5
-- CSS3 
+- CSS3
 - JavaScript
 - PHP
 - Laravel
@@ -19,17 +19,20 @@ Plateforme web complète permettant la gestion et la découverte de recettes de 
 ## 🚀 Fonctionnalités
 
 ### Partie Publique
+
 - Page d'accueil avec diaporama et menu horizontal
 - Catégories de recettes (entrées, plats, desserts, boissons)
 - Recherche de recettes par ingrédients
 - Filtres par temps, calories, notation
 - Système d'authentification utilisateur
 - Notation et ajout de recettes (utilisateurs connectés)
+- Partager des publications
 
 ### Administration
+
 - Gestion des recettes et validation
 - Gestion des utilisateurs
-- Gestion des news
+- Gestion des publications
 - Gestion des ingrédients et nutrition
 - Paramétrage du site
 
@@ -55,14 +58,14 @@ erDiagram
         string email
         string password
     }
-    
+  
     Social_Media_Link {
         string id
         string name
         string link
         string logo_link
     }
-    
+  
     Recipe {
         string id
         string name
@@ -75,26 +78,26 @@ erDiagram
         int calories
         int difficulty
     }
-    
+  
     Rating {
         string user_id
         string recipe_id
         int notation
     }
-    
+  
     Post {
         string id
         string user_id
         string content
     }
-    
+  
     Ingredient {
         string id
         string name
         string nutri_infos
         bool is_healthy
     }
-    
+  
     Recipe_Ingredient {
         string recipe_id
         string ingredient_id
