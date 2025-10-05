@@ -35,7 +35,7 @@ Plateforme web complète permettant la gestion et la découverte de recettes de 
 
 ### Schéma Entité-Relation
 
-
+```mermaid
 ---
 config:
   layout: elk
@@ -101,3 +101,4 @@ erDiagram
         string quantity
         string note
     }
+```
