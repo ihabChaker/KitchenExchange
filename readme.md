@@ -53,26 +53,26 @@ erDiagram
     Recipe ||--o{ Rating : receives
 
     User {
-        string id
+        int id
         string name
         string email
         string password
     }
   
     Social_Media_Link {
-        string id
+        int id
         string name
         string link
         string logo_link
     }
   
     Recipe {
-        string id
+        int id
         string name
         string image_path
         string description
         string steps
-        string user_id
+        int user_id
         int preparation_time
         int cooking_time
         int calories
@@ -80,27 +80,27 @@ erDiagram
     }
   
     Rating {
-        string user_id
-        string recipe_id
+        int user_id
+        int recipe_id
         int notation
     }
   
     Post {
-        string id
-        string user_id
+        int id
+        int user_id
         string content
     }
   
     Ingredient {
-        string id
+        int id
         string name
         string nutri_infos
         bool is_healthy
     }
   
     Recipe_Ingredient {
-        string recipe_id
-        string ingredient_id
+        int recipe_id
+        int ingredient_id
         string quantity
         string note
     }
