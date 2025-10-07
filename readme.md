@@ -53,7 +53,7 @@ erDiagram
     Recipe ||--o{ Rating : receives
 
     User {
-        int id
+        int id PK
         string name
         string email
         string password
