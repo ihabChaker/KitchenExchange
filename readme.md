@@ -27,6 +27,7 @@ Plateforme web complète permettant la gestion et la découverte de recettes de 
 - Système d'authentification utilisateur
 - Notation et ajout de recettes (utilisateurs connectés)
 - Partager des publications
+- Chatbot à interroger en mode text/vocal pour avoir des recommendations
 
 ### Administration
 
