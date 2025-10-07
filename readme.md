@@ -60,14 +60,14 @@ erDiagram
     }
   
     Social_Media_Link {
-        int id
+        int id PK
         string name
         string link
         string logo_link
     }
   
     Recipe {
-        int id
+        int id PK
         string name
         string image_path
         string description
@@ -86,13 +86,13 @@ erDiagram
     }
   
     Post {
-        int id
+        int id PK
         int user_id
         string content
     }
   
     Ingredient {
-        int id
+        int id PK
         string name
         string nutri_infos
         bool is_healthy
