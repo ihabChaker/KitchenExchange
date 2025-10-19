@@ -1,0 +1,69 @@
+{
+    "o:label": "Recipe Ingredient",
+    "o:resource_template_property": [
+        {
+            "o:alternate_label": null,
+            "o:alternate_comment": null,
+            "o:is_required": false,
+            "o:is_private": false,
+            "o:default_lang": null,
+            "data_types": [
+                {
+                    "name": "resource:item",
+                    "label": "Item"
+                }
+            ],
+            "vocabulary_namespace_uri": "https:\/\/github.com\/ihabChaker\/KitchenExchange#",
+            "vocabulary_label": "Kitchen Exchange Vocab",
+            "local_name": "recipe",
+            "label": "Recipe"
+        },
+        {
+            "o:alternate_label": null,
+            "o:alternate_comment": null,
+            "o:is_required": false,
+            "o:is_private": false,
+            "o:default_lang": null,
+            "data_types": [],
+            "vocabulary_namespace_uri": "https:\/\/github.com\/ihabChaker\/KitchenExchange#",
+            "vocabulary_label": "Kitchen Exchange Vocab",
+            "local_name": "quantity",
+            "label": "Quantity"
+        },
+        {
+            "o:alternate_label": null,
+            "o:alternate_comment": null,
+            "o:is_required": false,
+            "o:is_private": false,
+            "o:default_lang": null,
+            "data_types": [],
+            "vocabulary_namespace_uri": "https:\/\/github.com\/ihabChaker\/KitchenExchange#",
+            "vocabulary_label": "Kitchen Exchange Vocab",
+            "local_name": "note",
+            "label": "Note"
+        },
+        {
+            "o:alternate_label": null,
+            "o:alternate_comment": null,
+            "o:is_required": false,
+            "o:is_private": false,
+            "o:default_lang": null,
+            "data_types": [
+                {
+                    "name": "resource:item",
+                    "label": "Item"
+                }
+            ],
+            "vocabulary_namespace_uri": "https:\/\/github.com\/ihabChaker\/KitchenExchange#",
+            "vocabulary_label": "Kitchen Exchange Vocab",
+            "local_name": "ingredient",
+            "label": "Ingredient"
+        }
+    ],
+    "o:resource_class": {
+        "vocabulary_namespace_uri": "https:\/\/github.com\/ihabChaker\/KitchenExchange#",
+        "vocabulary_label": "Kitchen Exchange Vocab",
+        "local_name": "RecipeIngredient",
+        "label": "RecipeIngredient"
+    }
+}

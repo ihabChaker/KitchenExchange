@@ -55,7 +55,8 @@ erDiagram
 
     User {
         int id PK
-        string name
+        string first_name
+        string last_name
         string email
         string password
     }
@@ -64,7 +65,7 @@ erDiagram
         int id PK
         string name
         string link
-        string logo_link
+        string logo
     }
   
     Recipe {
@@ -83,7 +84,7 @@ erDiagram
     Rating {
         int user_id
         int recipe_id
-        int notation
+        int value
     }
   
     Post {
@@ -107,4 +108,4 @@ erDiagram
     }
 ```
 
-Readme file généré par deepseek avec la commande: En se basant sur la description de ce [projet](https://drive.google.com/file/d/1iTKBAJF6ly174hKAWj6ezlO57T44nYad/view?usp=sharing), donne moi un titre, les objectifs et le public visé 
+Readme file généré par deepseek avec la commande: En se basant sur la description de ce [projet](https://drive.google.com/file/d/1iTKBAJF6ly174hKAWj6ezlO57T44nYad/view?usp=sharing), donne moi un titre, les objectifs et le public visé

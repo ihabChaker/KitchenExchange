@@ -1,0 +1,193 @@
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix vs: <http://www.w3.org/2003/06/sw-vocab-status/ns#> .
+@prefix o: <http://omeka.org/s/vocabs/o#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix ke: <https://github.com/ihabChaker/KitchenExchange#> .
+@prefix ma: <http://www.w3.org/ns/ma-ont#>.
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<https://github.com/ihabChaker/KitchenExchange#> a owl:Ontology ;
+    dcterms:title "Kitchen Exchange" .
+
+ke:Recipe a rdfs:Class ;
+    rdfs:label "Recipe" ;
+    rdfs:domain o:Resource ;
+    vs:term_status "experimental" .
+
+ke:User a rdfs:Class ;
+    rdfs:label "User" ;
+    rdfs:domain o:Resource ;
+    vs:term_status "experimental" .
+
+ke:SocialMediaLink a rdfs:Class ;
+    rdfs:label "SocialMediaLink" ;
+    rdfs:domain o:Resource ;
+    vs:term_status "experimental" .
+
+ke:Rating a rdfs:Class ;
+    rdfs:label "Rating" ;
+    rdfs:domain o:Resource ;
+    vs:term_status "experimental" .
+
+ke:Post a rdfs:Class ;
+    rdfs:label "Post" ;
+    rdfs:domain o:Resource ;
+    vs:term_status "experimental" .
+
+ke:Ingredient a rdfs:Class ;
+    rdfs:label "Ingredient" ;
+    rdfs:domain o:Resource ;
+    vs:term_status "experimental" .
+
+ke:RecipeIngredient a rdfs:Class ;
+    rdfs:label "RecipeIngredient" ;
+    rdfs:domain o:Resource ;
+    vs:term_status "experimental" .
+
+ke:firstName a rdf:Property ;
+    rdfs:label "First Name" ;
+    rdfs:domain ke:User ;
+    vs:term_status "experimental" .
+
+ke:lastName a rdf:Property ;
+    rdfs:label "Last Name" ;
+    rdfs:domain ke:User ;
+    vs:term_status "experimental" .
+
+ke:email a rdf:Property ;
+    rdfs:label "Email" ;
+    rdfs:domain ke:User ;
+    vs:term_status "experimental" .
+
+ke:password a rdf:Property ;
+    rdfs:label "Password" ;
+    rdfs:domain ke:User ;
+    vs:term_status "experimental" .
+
+ke:name a rdf:Property ;
+    rdfs:label "Name" ;
+    rdfs:domain rdfs:Class ;
+    vs:term_status "experimental" .
+
+ke:description a rdf:Property ;
+    rdfs:label "Description" ;
+    rdfs:domain rdfs:Class ;
+    vs:term_status "experimental" .
+
+ke:link a rdf:Property ;
+    rdfs:label "Link" ;
+    rdfs:domain rdfs:Class ;
+    vs:term_status "experimental" .
+ 
+ke:logo a rdf:Property ;
+    rdfs:label "Logo" ;
+    rdfs:domain ke:SocialMediaLink ;
+    rdfs:range rdfs:Resource ;
+    vs:term_status "experimental" .
+
+ke:image a rdf:Property ;
+    rdfs:label "Image" ;
+    rdfs:domain rdfs:Class ;
+    rdfs:range rdfs:Resource ;
+    vs:term_status "experimental" .
+
+ke:steps a rdf:Property ;
+    rdfs:label "Steps" ;
+    rdfs:domain ke:Recipe ;
+    vs:term_status "experimental" .
+
+ke:cookingTime a rdf:Property ;
+    rdfs:label "Cooking Time" ;
+    rdfs:domain ke:Recipe ;
+    vs:term_status "experimental" .
+
+ke:preparationTime a rdf:Property ;
+    rdfs:label "Preparation Time" ;
+    rdfs:domain ke:Recipe ;
+    vs:term_status "experimental" .
+
+ke:calories a rdf:Property ;
+    rdfs:label "Calories" ;
+    rdfs:domain ke:Recipe ;
+    vs:term_status "experimental" .
+
+ke:difficulty a rdf:Property ;
+    rdfs:label "Difficulty" ;
+    rdfs:domain ke:Recipe ;
+    vs:term_status "experimental" .
+
+ke:createdBy a rdf:Property ;
+    rdfs:label "Created By" ;
+    rdfs:domain rdfs:Class ;
+    rdfs:range ke:User ;
+    vs:term_status "experimental" .
+
+ke:hasIngredient a rdf:Property ;
+    rdfs:label "Has Ingredient" ;
+    rdfs:domain ke:Recipe ;
+    rdfs:range ke:RecipeIngredient ;
+    vs:term_status "experimental" .
+
+ke:title a rdf:Property ;
+    rdfs:label "Title" ;
+    rdfs:domain rdfs:Class ;
+    vs:term_status "experimental" .
+
+ke:content: a rdf:Property ;
+    rdfs:label "Content" ;
+    rdfs:domain ke:Post ;
+    vs:term_status "experimental" .
+
+ke:nutritionalInfo a rdf:Property ;
+    rdfs:label "Nutritional Info" ;
+    rdfs:domain ke:Ingredient ;
+    vs:term_status "experimental" .
+
+ke:isHealthy a rdf:Property ;
+    rdfs:label "Is Healthy" ;
+    rdfs:domain ke:Ingredient ;
+    xsd:range xsd:boolean ;
+    vs:term_status "experimental" .
+
+ke:ratedBy a rdf:Property ;
+    rdfs:label "Rated By" ;
+    rdfs:domain ke:Rating ;
+    rdfs:range ke:User ;
+    vs:term_status "experimental" .
+
+ke:ratesRecipe a rdf:Property ;
+    rdfs:label "Rates Recipe" ;
+    rdfs:domain ke:Rating ;
+    rdfs:range ke:Recipe ;
+    vs:term_status "experimental" .
+
+ke:ratingValue a rdf:Property ;
+    rdfs:label "Rating Value" ;
+    rdfs:domain ke:Rating ;
+    xsd:range xsd:integer ;
+    vs:term_status "experimental" .
+
+ke:recipe a rdf:Property ;
+    rdfs:label "Recipe" ;
+    rdfs:domain ke:RecipeIngredient ;
+    rdfs:range ke:Recipe ;
+    vs:term_status "experimental" .
+
+ke:ingredient a rdf:Property ;
+    rdfs:label "Ingredient" ;
+    rdfs:domain ke:RecipeIngredient ;
+    rdfs:range ke:Ingredient ;
+    vs:term_status "experimental" .
+
+ke:quantity a rdf:Property ;
+    rdfs:label "Quantity" ;
+    rdfs:domain ke:RecipeIngredient ;
+    vs:term_status "experimental" .
+
+ke:note a rdf:Property ;
+    rdfs:label "Note" ;
+    rdfs:domain ke:RecipeIngredient ;
+    vs:term_status "experimental" .
