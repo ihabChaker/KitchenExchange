@@ -1,0 +1,6 @@
+"o:resource_class","o:resource_template","ke:name","ke:logo","ke:link"
+"ke:SocialMediaLink","SocialMediaLink","Facebook","https://example.com/facebook-logo.png","https://facebook.com/example"
+"ke:SocialMediaLink","SocialMediaLink","Twitter","https://example.com/twitter-logo.png","https://twitter.com/example"
+"ke:SocialMediaLink","SocialMediaLink","Instagram","https://example.com/instagram-logo.png","https://instagram.com/example"
+"ke:SocialMediaLink","SocialMediaLink","LinkedIn","https://example.com/linkedin-logo.png","https://linkedin.com/company/example"
+"ke:SocialMediaLink","SocialMediaLink","YouTube","https://example.com/youtube-logo.png","https://youtube.com/example"

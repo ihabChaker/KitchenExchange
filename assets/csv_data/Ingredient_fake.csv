@@ -1,0 +1,6 @@
+"o:resource_class","o:resource_template","ke:name","ke:nutritionalInfo","ke:isHealthy"
+"ke:Ingredient","Ingredient","Tomato","Calories: 18, Carbs: 3.9g, Protein: 0.9g","true"
+"ke:Ingredient","Ingredient","Olive Oil","Calories: 119, Fat: 13.5g, Carbs: 0g","true"
+"ke:Ingredient","Ingredient","Sugar","Calories: 387, Carbs: 100g, Protein: 0g","false"
+"ke:Ingredient","Ingredient","Chicken Breast","Calories: 165, Protein: 31g, Fat: 3.6g","true"
+"ke:Ingredient","Ingredient","Butter","Calories: 717, Fat: 81g, Carbs: 0.1g","false"

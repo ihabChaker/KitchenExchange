@@ -1,0 +1,6 @@
+"o:resource_class","o:resource_template","title","ke:firstName","ke:lastName","ke:email","ke:password"
+"ke:User","User","Alice Smith","Alice","Smith","alice.smith@example.com","pass1234"
+"ke:User","User","Bob Johnson","Bob","Johnson","bob.johnson@example.com","securepass"
+"ke:User","User","Charlie Brown","Charlie","Brown","charlie.brown@example.com","helloWorld"
+"ke:User","User","Diana Evans","Diana","Evans","diana.evans@example.com","myPassword"
+"ke:User","User","Ethan Lee","Ethan","Lee","ethan.lee@example.com","letmein"
