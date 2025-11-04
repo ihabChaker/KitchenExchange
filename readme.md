@@ -1,7 +1,3 @@
-# Guide de Recettes de Cuisine
-
-Site web de gestion de recettes de cuisine développé dans le cadre du module TDW 2CS.
-
 ## 🎯 Description
 
 Plateforme web complète permettant la gestion et la découverte de recettes de cuisine avec une interface publique et un panneau d'administration.
