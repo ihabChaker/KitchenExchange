@@ -8,6 +8,8 @@
         integrity="sha512-vc58qvvBdrDR4etbxMdlTt4GBQk1qjvyORR2nrsPsFPyrs+/u5c3+1Ct6upOgdZoIl7eq6k3a1UPDSNAQi/32A=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <link rel="stylesheet" href="style.css">
+    <link href="recorder.css" rel="stylesheet">
+
     <title>Kitchen Exchange</title>
 </head>
 
@@ -16,7 +18,6 @@
         <h1>Kitchen Exchange — Omeka API UI</h1>
         <div class="controls">
             <button id="refreshAll" class="btn btn-ghost">Refresh</button>
-            <span class="muted">Local dev</span>
         </div>
     </header>
 
@@ -60,6 +61,11 @@
             <label for="steps">Cooking steps</label>
             <textarea name="steps" id="steps" placeholder="Describe preparation steps..."></textarea>
 
+            <!-- Ingredient chips / checkboxes container (used by JS) -->
+            <label style="margin-top:8px">Ingredients (select to add to recipe)</label>
+            <div id="ingredients-checkboxes" class="chips-wrap" aria-live="polite"
+                style="display:flex;flex-wrap:wrap;gap:6px;margin:8px 0"></div>
+
             <div style="display:flex;gap:10px;align-items:center;margin-top:8px">
                 <button id="btnCreateRecipe" class="btn btn-primary">Create Recipe</button>
                 <button id="btnClearRecipe" class="btn btn-ghost">Clear</button>
@@ -78,9 +84,30 @@
                     <tbody id="recipeList"></tbody>
                 </table>
             </div>
+
+            <!-- Recorder UI integrated into the recipe card so recordings are visibly connected to recipes -->
+            <div class="recorder-section" style="margin-top:16px">
+                <h3>Voice notes / recordings</h3>
+                <div class="recorder-controls" style="display:flex;gap:10px;align-items:center;margin-bottom:8px">
+                    <canvas class="visualizer" height="60px"
+                        style="flex:1;max-width:360px;background:#f7f7f7;border-radius:4px"></canvas>
+                    <div id="buttons" style="display:flex;gap:6px">
+                        <button class="record btn btn-primary">Record</button>
+                        <button class="stop btn btn-ghost">Stop</button>
+                    </div>
+                </div>
+
+                <div class="sound-clips" aria-live="polite">
+                    <!-- voice-recorder.js will append recorded clips here -->
+                </div>
+
+                <small class="hint">Record short voice notes for the recipe. Use the playback controls to
+                    review.</small>
+            </div>
         </section>
     </main>
 
+    <script type="module" src="./voice-recorder.js"></script>
     <script type="module">
         import { Omk } from './modules/omk.js';
 

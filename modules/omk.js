@@ -7,7 +7,7 @@ export class Omk {
         this.ident = params.ident ? params.ident : false;
         this.mail = params.mail ? params.mail : false;
         this.api = params.api ? params.api : false;
-        this.vocabs = params.vocabs ? params.vocabs : ['dcterms', 'fup8', 'foaf', 'dctype'];
+        this.vocabs = params.vocabs ? params.vocabs : ['dcterms', 'ma', 'oa', 'jdc', 'eqt', 'skos', 'foaf', 'fup8'];
         this.loader = new loader();
         this.user = false;
         this.props = [];
@@ -16,7 +16,6 @@ export class Omk {
         this.items = [];
         this.resources = [];
         this.rts
-        this.anythingLLM = false;
         this.queries = [];
         let perPage = 100, types = { 'items': 'o:item', 'media': 'o:media' };
 
@@ -236,13 +235,13 @@ export class Omk {
             d3.json(url).then((data) => {
                 me.user = data.length ? data[0] : false;
                 //TODO: mieux gérer anythingLLM Login
-                me.user.anythingLLM = me.anythingLLM ? syncRequest(me.api.replace('api/', 's/cours-bnf/page/ajax?json=1&helper=anythingLLMlogin')) : false;
+                //me.user.anythingLLM = syncRequest(me.api.replace('api/','s/cours-bnf/page/ajax?json=1&helper=anythingLLMlogin'));
                 if (cb) cb(me.user);
             });
 
         }
 
-        this.createItem = function (data, cb = false, verifDoublons) {
+        this.createItem = function (data, cb = false, verifDoublons, file) {
             if (verifDoublons) {
                 let items = me.searchItems(verifDoublons);
                 if (items.length) {
@@ -251,9 +250,7 @@ export class Omk {
                 }
             }
             let url = me.api + 'items?key_identity=' + me.ident + '&key_credential=' + me.key;
-            let formattedData = me.formatData(data);
-            console.log("Formatted payload for Omeka:", JSON.stringify(formattedData, null, 2));
-            postData({ 'u': url, 'm': 'POST' }, formattedData).then((rs) => {
+            postData({ 'u': url, 'm': 'POST' }, me.formatData(data), file).then((rs) => {
                 me.items[rs['o:id']] = rs;
                 if (cb) cb(rs);
             });
@@ -317,26 +314,15 @@ export class Omk {
             }
             return fd;
         }
-        this.valueFormat = function (p, v) {
-            return formatValue(p, v);
-        }
         function formatValue(p, v) {
-            // If v is an object with 'rid', treat as resource reference
             if (typeof v === 'object' && v.rid)
                 return { "property_id": p['o:id'], "value_resource_id": v.rid, "type": "resource" };
-            // If v is an object with 'a', treat as annotated literal
-            else if (typeof v === 'object' && v.a)
-                return { "property_id": p['o:id'], "@value": v.v, "type": "literal", "@annotation": v.a };
-            // If v is an object with 'u', treat as URI
             else if (typeof v === 'object' && v.u)
                 return { "property_id": p['o:id'], "@id": v.u, "o:label": v.l, "type": "uri" };
-            // If v is an object with 'o:id', extract the id and treat as resource reference (common mistake fix)
-            else if (typeof v === 'object' && v['o:id'])
-                return { "property_id": p['o:id'], "value_resource_id": v['o:id'], "type": "resource" };
-            // If v is a plain object without recognized keys, stringify as literal (last resort)
+            else if (typeof v === 'object' && v.geo)
+                return { "property_id": p['o:id'], "@value": v.geo, "type": "geography:coordinates" };
             else if (typeof v === 'object')
                 return { "property_id": p['o:id'], "@value": JSON.stringify(v), "type": "literal" };
-            // Otherwise, treat as literal string/number
             else
                 return { "property_id": p['o:id'], "@value": v, "type": "literal" };
         }
