@@ -1,0 +1,97 @@
+<?php
+$this->headTitle('Chat with LLM');
+?>
+<h1>Chat with LLM</h1>
+
+<div id="chat-container"
+    style="border: 1px solid #ccc; padding: 10px; height: 400px; overflow-y: scroll; margin-bottom: 10px;">
+    <div class="message system">Welcome! Ask me anything.</div>
+</div>
+
+<div id="chat-input">
+    <input type="text" id="user-message" placeholder="Type your message..." style="width: 80%;">
+    <button id="send-btn">Send</button>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const chatContainer = document.getElementById('chat-container');
+        const messageInput = document.getElementById('user-message');
+        const sendBtn = document.getElementById('send-btn');
+
+        function appendMessage(role, text) {
+            const div = document.createElement('div');
+            div.className = 'message ' + role;
+            div.style.marginBottom = '10px';
+            div.style.padding = '5px';
+            div.style.borderRadius = '5px';
+
+            if (role === 'user') {
+                div.style.backgroundColor = '#e1f5fe';
+                div.style.textAlign = 'right';
+                div.textContent = 'You: ' + text;
+            } else if (role === 'ai') {
+                div.style.backgroundColor = '#f1f1f1';
+                div.style.textAlign = 'left';
+                div.textContent = 'AI: ' + text;
+            } else {
+                div.style.color = 'red';
+                div.textContent = text;
+            }
+
+            chatContainer.appendChild(div);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function sendMessage() {
+            const message = messageInput.value.trim();
+            if (!message) return;
+
+            appendMessage('user', message);
+            messageInput.value = '';
+            messageInput.disabled = true;
+            sendBtn.disabled = true;
+
+            fetch('<?php echo $this->url('admin/mymodule-chat/query'); ?>', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ message: message })
+            })
+                .then(response => {
+                    console.log('Response status:', response.status);
+                    console.log('Response headers:', response.headers);
+                    return response.text();
+                })
+                .then(text => {
+                    console.log('Response text:', text);
+                    try {
+                        const data = JSON.parse(text);
+                        if (data.error) {
+                            appendMessage('system', 'Error: ' + data.error);
+                        } else {
+                            appendMessage('ai', data.reply);
+                        }
+                    } catch (e) {
+                        appendMessage('system', 'Parse error: ' + e.message + '. Response: ' + text.substring(0, 200));
+                    }
+                })
+                .catch(error => {
+                    appendMessage('system', 'Error: ' + error.message);
+                })
+                .finally(() => {
+                    messageInput.disabled = false;
+                    sendBtn.disabled = false;
+                    messageInput.focus();
+                });
+        }
+
+        sendBtn.addEventListener('click', sendMessage);
+        messageInput.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+    });
+</script>
