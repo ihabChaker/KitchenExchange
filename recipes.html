@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recettes - Kitchen Exchange</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"
+        integrity="sha512-vc58qvvBdrDR4etbxMdlTt4GBQk1qjvyORR2nrsPsFPyrs+/u5c3+1Ct6upOgdZoIl7eq6k3a1UPDSNAQi/32A=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link rel="stylesheet" href="main.css">
+    <style>
+        .filters-section {
+            background: var(--card);
+            padding: 24px;
+            border-radius: var(--radius);
+            margin-bottom: 32px;
+            box-shadow: var(--shadow);
+        }
+
+        .filters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .filter-group label {
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--accent-2);
+        }
+
+        .filter-group select,
+        .filter-group input {
+            padding: 10px;
+            border: 2px solid var(--bg);
+            border-radius: var(--radius);
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .filter-group select:focus,
+        .filter-group input:focus {
+            border-color: var(--accent);
+        }
+
+        .filter-actions {
+            display: flex;
+            gap: 12px;
+            align-items: flex-end;
+        }
+
+        .btn-filter {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            border-radius: var(--radius);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-filter:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-reset {
+            background: transparent;
+            border: 2px solid var(--muted);
+            color: var(--muted);
+            padding: 8px 20px;
+            border-radius: var(--radius);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-reset:hover {
+            border-color: var(--accent-2);
+            color: var(--accent-2);
+        }
+
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .results-count {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--accent-2);
+        }
+
+        .sort-select {
+            padding: 8px 16px;
+            border: 2px solid var(--bg);
+            border-radius: var(--radius);
+            font-size: 14px;
+            background: white;
+            cursor: pointer;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 80px 24px;
+            color: var(--muted);
+        }
+
+        .no-results-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <span class="logo-icon">🍳</span>
+                <span class="logo-text">Kitchen Exchange</span>
+            </a>
+            <ul class="nav-menu">
+                <li><a href="index.html">Accueil</a></li>
+                <li><a href="recipes.html" class="active">Recettes</a></li>
+                <li><a href="posts.html">Publications</a></li>
+                <li><a href="chatbot.html">Assistant</a></li>
+                <li><a href="admin.html">Admin</a></li>
+            </ul>
+            <div class="nav-actions">
+                <a href="auth.html" class="btn-ghost">Connexion</a>
+                <a href="add-recipe.html" class="btn-primary">Ajouter une recette</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-main" style="padding-top: 32px; padding-bottom: 80px;">
+        <h1 style="font-size: 36px; margin-bottom: 32px;">Découvrir les recettes</h1>
+
+        <!-- Filters -->
+        <div class="filters-section">
+            <div class="filters-grid">
+                <div class="filter-group">
+                    <label>Rechercher</label>
+                    <input type="text" id="searchInput" placeholder="Nom ou ingrédient...">
+                </div>
+
+                <div class="filter-group">
+                    <label>Difficulté</label>
+                    <select id="difficultyFilter">
+                        <option value="">Toutes</option>
+                        <option value="1">Facile</option>
+                        <option value="2">Moyen</option>
+                        <option value="3">Difficile</option>
+                        <option value="4">Expert</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label>Temps de préparation (max)</label>
+                    <input type="number" id="prepTimeFilter" placeholder="Minutes" min="0">
+                </div>
+
+                <div class="filter-group">
+                    <label>Calories (max)</label>
+                    <input type="number" id="caloriesFilter" placeholder="kcal" min="0">
+                </div>
+
+                <div class="filter-actions">
+                    <button class="btn-filter" onclick="applyFilters()">Filtrer</button>
+                    <button class="btn-reset" onclick="resetFilters()">Réinitialiser</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Header -->
+        <div class="results-header">
+            <div class="results-count" id="resultsCount">Chargement...</div>
+            <select class="sort-select" id="sortSelect" onchange="sortRecipes()">
+                <option value="recent">Plus récentes</option>
+                <option value="name">Nom (A-Z)</option>
+                <option value="prepTime">Temps de préparation</option>
+                <option value="calories">Calories</option>
+            </select>
+        </div>
+
+        <!-- Recipes Grid -->
+        <div class="recipes-grid" id="recipesGrid">
+            <div class="loading">Chargement des recettes...</div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container-main">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Kitchen Exchange</h4>
+                    <p>Votre plateforme de partage de recettes culinaires</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Navigation</h4>
+                    <ul>
+                        <li><a href="index.html">Accueil</a></li>
+                        <li><a href="recipes.html">Recettes</a></li>
+                        <li><a href="posts.html">Publications</a></li>
+                        <li><a href="admin.html">Administration</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Suivez-nous</h4>
+                    <div class="social-links" id="socialLinks"></div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Kitchen Exchange. Tous droits réservés.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/nav.js"></script>
+    <script type="module" src="js/recipes.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enregistreur vocal - Kitchen Exchange</title>
+    <link rel="stylesheet" href="main.css">
+    <link rel="stylesheet" href="recorder.css">
+    <style>
+        .recorder-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--card);
+            padding: 40px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+
+        .recorder-title {
+            font-size: 28px;
+            margin-bottom: 24px;
+            color: var(--accent);
+            text-align: center;
+        }
+
+        .recorder-info {
+            text-align: center;
+            color: var(--muted);
+            margin-bottom: 32px;
+            padding: 16px;
+            background: var(--bg);
+            border-radius: var(--radius);
+        }
+
+        .recordings-list {
+            margin-top: 32px;
+        }
+
+        .recordings-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: var(--accent-2);
+        }
+
+        .clip {
+            background: var(--bg);
+            padding: 16px;
+            border-radius: var(--radius);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .clip p {
+            flex: 1;
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .clip audio {
+            flex: 2;
+        }
+
+        .clip button {
+            background: var(--danger);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .clip button:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .clip button.rename {
+            background: var(--accent);
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 24px;
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <span class="logo-icon">🍳</span>
+                <span class="logo-text">Kitchen Exchange</span>
+            </a>
+            <ul class="nav-menu">
+                <li><a href="index.html">Accueil</a></li>
+                <li><a href="recipes.html">Recettes</a></li>
+                <li><a href="posts.html">Publications</a></li>
+                <li><a href="chatbot.html">Assistant</a></li>
+                <li><a href="admin.html">Admin</a></li>
+            </ul>
+            <div class="nav-actions">
+                <button class="btn-ghost" id="loginBtn">Connexion</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-main" style="padding-top: 32px; padding-bottom: 80px;">
+        <div class="recorder-container">
+            <a href="javascript:history.back()" class="back-link">← Retour</a>
+
+            <h1 class="recorder-title">🎙️ Enregistreur vocal</h1>
+
+            <div class="recorder-info" id="recipeInfo">
+                Enregistrez vos avis vocaux sur les recettes
+            </div>
+
+            <div class="main-controls">
+                <canvas class="visualizer" height="60px"></canvas>
+                <div id="buttons">
+                    <button class="record">Enregistrer</button>
+                    <button class="stop">Arrêter</button>
+                </div>
+            </div>
+
+            <div class="recordings-list">
+                <h2 class="recordings-title">Vos enregistrements</h2>
+                <section class="sound-clips"></section>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="js/voice-recorder-enhanced.js"></script>
+</body>
+
+</html>

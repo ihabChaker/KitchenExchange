@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajouter une recette - Kitchen Exchange</title>
+    <link rel="stylesheet" href="main.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"
+        integrity="sha512-vc58qvvBdrDR4etbxMdlTt4GBQk1qjvyORR2nrsPsFPyrs+/u5c3+1Ct6upOgdZoIl7eq6k3a1UPDSNAQi/32A=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <style>
+        .form-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--card);
+            padding: 40px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+
+        .form-title {
+            font-size: 32px;
+            margin-bottom: 32px;
+            color: var(--accent);
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--accent-2);
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--bg);
+            border-radius: var(--radius);
+            font-size: 16px;
+            font-family: inherit;
+            transition: border-color 0.2s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .image-upload {
+            border: 3px dashed var(--bg);
+            border-radius: var(--radius);
+            padding: 32px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .image-upload:hover {
+            border-color: var(--accent);
+            background: var(--bg);
+        }
+
+        .image-upload input {
+            display: none;
+        }
+
+        .image-preview {
+            max-width: 100%;
+            max-height: 300px;
+            margin-top: 16px;
+            border-radius: var(--radius);
+        }
+
+        .ingredients-selector {
+            border: 2px solid var(--bg);
+            border-radius: var(--radius);
+            padding: 16px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .ingredient-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            margin-bottom: 8px;
+            background: var(--bg);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .ingredient-checkbox:hover {
+            background: #e5e9f0;
+        }
+
+        .ingredient-checkbox input {
+            width: auto;
+        }
+
+        .ingredient-checkbox label {
+            cursor: pointer;
+            margin: 0;
+            flex: 1;
+        }
+
+        .quantity-input {
+            width: 150px;
+            padding: 6px;
+            border: 1px solid var(--bg);
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .selected-ingredients {
+            margin-top: 16px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .ingredient-chip {
+            background: var(--accent);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .chip-remove {
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            margin-top: 32px;
+            padding-top: 32px;
+            border-top: 2px solid var(--bg);
+        }
+
+        .btn-submit {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 14px 48px;
+            border-radius: var(--radius);
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-submit:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-cancel {
+            background: transparent;
+            border: 2px solid var(--muted);
+            color: var(--muted);
+            padding: 12px 48px;
+            border-radius: var(--radius);
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <span class="logo-icon">🍳</span>
+                <span class="logo-text">Kitchen Exchange</span>
+            </a>
+            <ul class="nav-menu">
+                <li><a href="index.html">Accueil</a></li>
+                <li><a href="recipes.html">Recettes</a></li>
+                <li><a href="posts.html">Publications</a></li>
+                <li><a href="chatbot.html">Assistant</a></li>
+                <li><a href="admin.html">Admin</a></li>
+            </ul>
+            <div class="nav-actions">
+                <a href="auth.html" class="btn-ghost">Connexion</a>
+                <a href="add-recipe.html" class="btn-primary">Ajouter une recette</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-main" style="padding-top: 32px; padding-bottom: 80px;">
+        <div class="form-container">
+            <h1 class="form-title">📝 Ajouter une nouvelle recette</h1>
+
+            <form id="recipeForm">
+                <div class="form-group">
+                    <label for="recipeName">Nom de la recette *</label>
+                    <input type="text" id="recipeName" required placeholder="Ex: Tarte aux pommes">
+                </div>
+
+                <div class="form-group">
+                    <label for="recipeDescription">Description *</label>
+                    <textarea id="recipeDescription" required placeholder="Décrivez votre recette..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Image de la recette</label>
+                    <div class="image-upload" onclick="document.getElementById('recipeImage').click()">
+                        <input type="file" id="recipeImage" accept="image/*" onchange="previewImage(event)">
+                        <div>📷 Cliquez pour ajouter une image</div>
+                        <img id="imagePreview" class="image-preview" style="display: none;">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="prepTime">Temps de préparation (min)</label>
+                        <input type="number" id="prepTime" min="0" placeholder="30">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="cookTime">Temps de cuisson (min)</label>
+                        <input type="number" id="cookTime" min="0" placeholder="45">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="calories">Calories</label>
+                        <input type="number" id="calories" min="0" placeholder="350">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="difficulty">Difficulté *</label>
+                        <select id="difficulty" required>
+                            <option value="">Sélectionner</option>
+                            <option value="1">Facile</option>
+                            <option value="2">Moyen</option>
+                            <option value="3">Difficile</option>
+                            <option value="4">Expert</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Ingrédients *</label>
+                    <div class="ingredients-selector" id="ingredientsSelector">
+                        <div style="text-align: center; padding: 20px; color: var(--muted);">
+                            Chargement des ingrédients...
+                        </div>
+                    </div>
+                    <div class="selected-ingredients" id="selectedIngredients"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="steps">Étapes de préparation *</label>
+                    <textarea id="steps" required
+                        placeholder="1. Préchauffer le four à 180°C&#10;2. Mélanger les ingrédients..."></textarea>
+                </div>
+
+                <div class="form-actions">
+                    <a href="recipes.html" class="btn-cancel">Annuler</a>
+                    <button type="submit" class="btn-submit" id="submitBtn">Publier la recette</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/nav.js"></script>
+    <script type="module" src="js/add-recipe.js"></script>
+</body>
+
+</html>

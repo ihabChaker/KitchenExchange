@@ -1,373 +1,161 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kitchen Exchange - Partagez vos recettes</title>
+    <link rel="stylesheet" href="main.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"
         integrity="sha512-vc58qvvBdrDR4etbxMdlTt4GBQk1qjvyORR2nrsPsFPyrs+/u5c3+1Ct6upOgdZoIl7eq6k3a1UPDSNAQi/32A=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <link rel="stylesheet" href="style.css">
-    <link href="recorder.css" rel="stylesheet">
-
-    <title>Kitchen Exchange</title>
 </head>
 
 <body>
-    <header>
-        <h1>Kitchen Exchange — Omeka API UI</h1>
-        <div class="controls">
-            <button id="refreshAll" class="btn btn-ghost">Refresh</button>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <span class="logo-icon">🍳</span>
+                <span class="logo-text">Kitchen Exchange</span>
+            </a>
+            <ul class="nav-menu">
+                <li><a href="index.html" class="active">Accueil</a></li>
+                <li><a href="recipes.html">Recettes</a></li>
+                <li><a href="posts.html">Publications</a></li>
+                <li><a href="chatbot.html">Assistant</a></li>
+                <li><a href="admin.html">Admin</a></li>
+            </ul>
+            <div class="nav-actions">
+                <a href="auth.html" class="btn-ghost">Connexion</a>
+                <a href="add-recipe.html" class="btn-primary">Ajouter une recette</a>
+            </div>
         </div>
-    </header>
+    </nav>
 
-    <main class="container">
-        <section class="card" aria-labelledby="ing-title">
-            <h2 id="ing-title">Ingredients</h2>
-
-            <div class="row" style="margin-bottom:8px">
-                <div class="col">
-                    <label for="ingredient">Ingredient Name</label>
-                    <input type="text" name="ingredient" id="ingredient" placeholder="e.g. Olive oil">
-                </div>
-                <div style="align-self:flex-end">
-                    <button id="btnCreateIngredient" class="btn btn-primary">Create</button>
+    <!-- Hero Slideshow -->
+    <section class="hero">
+        <div class="slideshow">
+            <div class="slide active"
+                style="background-image: url('https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=1200');">
+                <div class="slide-content">
+                    <h1>Découvrez des recettes authentiques</h1>
+                    <p>Partagez votre passion pour la cuisine avec notre communauté</p>
+                    <a href="recipes.html" class="btn-hero">Explorer les recettes</a>
                 </div>
             </div>
-
-            <div class="table-wrap" aria-live="polite">
-                <table>
-                    <thead>
-                        <tr>
-                            <th style="width:70px">ID</th>
-                            <th>Name</th>
-                            <th style="width:90px">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody id="ingredientList"></tbody>
-                </table>
+            <div class="slide"
+                style="background-image: url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1200');">
+                <div class="slide-content">
+                    <h1>Des milliers de recettes à explorer</h1>
+                    <p>De l'entrée au dessert, trouvez l'inspiration pour tous vos repas</p>
+                    <a href="recipes.html" class="btn-hero">Découvrir</a>
+                </div>
             </div>
-
-            <small class="hint">Click an ingredient's delete button to remove it. Created items appear
-                instantly.</small>
-        </section>
-
-        <section class="card" aria-labelledby="rec-title">
-            <h2 id="rec-title">Recipes</h2>
-
-            <label for="recipe">Recipe Name</label>
-            <input type="text" name="recipe" id="recipe" placeholder="e.g. Shakshuka">
-
-            <label for="steps">Cooking steps</label>
-            <textarea name="steps" id="steps" placeholder="Describe preparation steps..."></textarea>
-
-            <!-- Ingredient chips / checkboxes container (used by JS) -->
-            <label style="margin-top:8px">Ingredients (select to add to recipe)</label>
-            <div id="ingredients-checkboxes" class="chips-wrap" aria-live="polite"
-                style="display:flex;flex-wrap:wrap;gap:6px;margin:8px 0"></div>
-
-            <div style="display:flex;gap:10px;align-items:center;margin-top:8px">
-                <button id="btnCreateRecipe" class="btn btn-primary">Create Recipe</button>
-                <button id="btnClearRecipe" class="btn btn-ghost">Clear</button>
-                <span class="muted" id="recipeStatus"></span>
+            <div class="slide"
+                style="background-image: url('https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=1200');">
+                <div class="slide-content">
+                    <h1>Partagez vos créations culinaires</h1>
+                    <p>Rejoignez notre communauté de passionnés de cuisine</p>
+                    <a href="add-recipe.html" class="btn-hero">Ajouter ma recette</a>
+                </div>
             </div>
+        </div>
+        <button class="slide-btn prev" onclick="changeSlide(-1)">‹</button>
+        <button class="slide-btn next" onclick="changeSlide(1)">›</button>
+        <div class="slide-dots"></div>
+    </section>
 
-            <div class="table-wrap" style="margin-top:12px;">
-                <table>
-                    <thead>
-                        <tr>
-                            <th style="width:70px">ID</th>
-                            <th>Name</th>
-                            <th style="width:90px">Delete</th>
-                        </tr>
-                    </thead>
-                    <tbody id="recipeList"></tbody>
-                </table>
+    <!-- Search Bar -->
+    <section class="search-section">
+        <div class="container-main">
+            <div class="search-box">
+                <input type="text" placeholder="Rechercher une recette ou un ingrédient..." id="searchInput">
+                <button class="btn-search" onclick="searchRecipes()">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <path d="M9 17A8 8 0 1 0 9 1a8 8 0 0 0 0 16zM19 19l-4.35-4.35" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" />
+                    </svg>
+                </button>
             </div>
+        </div>
+    </section>
 
-            <!-- Recorder UI integrated into the recipe card so recordings are visibly connected to recipes -->
-            <div class="recorder-section" style="margin-top:16px">
-                <h3>Voice notes / recordings</h3>
-                <div class="recorder-controls" style="display:flex;gap:10px;align-items:center;margin-bottom:8px">
-                    <canvas class="visualizer" height="60px"
-                        style="flex:1;max-width:360px;background:#f7f7f7;border-radius:4px"></canvas>
-                    <div id="buttons" style="display:flex;gap:6px">
-                        <button class="record btn btn-primary">Record</button>
-                        <button class="stop btn btn-ghost">Stop</button>
+    <!-- Categories -->
+    <section class="categories-section">
+        <div class="container-main">
+            <h2 class="section-title">Parcourir par catégorie</h2>
+            <div class="categories-grid">
+                <a href="recipes.html?difficulty=1" class="category-card">
+                    <div class="category-icon">🥗</div>
+                    <h3>Entrées</h3>
+                    <p>Salades, soupes et amuse-bouches</p>
+                    <span class="category-count" id="cat-entrees">0 recettes</span>
+                </a>
+                <a href="recipes.html?difficulty=2" class="category-card">
+                    <div class="category-icon">🍝</div>
+                    <h3>Plats</h3>
+                    <p>Plats principaux et accompagnements</p>
+                    <span class="category-count" id="cat-plats">0 recettes</span>
+                </a>
+                <a href="recipes.html?difficulty=3" class="category-card">
+                    <div class="category-icon">🍰</div>
+                    <h3>Desserts</h3>
+                    <p>Gâteaux, pâtisseries et douceurs</p>
+                    <span class="category-count" id="cat-desserts">0 recettes</span>
+                </a>
+                <a href="recipes.html?difficulty=4" class="category-card">
+                    <div class="category-icon">🍹</div>
+                    <h3>Boissons</h3>
+                    <p>Cocktails, smoothies et boissons</p>
+                    <span class="category-count" id="cat-boissons">0 recettes</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Recipes -->
+    <section class="featured-section">
+        <div class="container-main">
+            <h2 class="section-title">Recettes populaires</h2>
+            <div class="recipes-grid" id="featuredRecipes">
+                <div class="loading">Chargement des recettes...</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container-main">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Kitchen Exchange</h4>
+                    <p>Votre plateforme de partage de recettes culinaires</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Navigation</h4>
+                    <ul>
+                        <li><a href="index.html">Accueil</a></li>
+                        <li><a href="recipes.html">Recettes</a></li>
+                        <li><a href="posts.html">Publications</a></li>
+                        <li><a href="admin.html">Administration</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Suivez-nous</h4>
+                    <div class="social-links" id="socialLinks">
+                        <!-- Social media links loaded dynamically -->
                     </div>
                 </div>
-
-                <div class="sound-clips" aria-live="polite">
-                    <!-- voice-recorder.js will append recorded clips here -->
-                </div>
-
-                <small class="hint">Record short voice notes for the recipe. Use the playback controls to
-                    review.</small>
             </div>
-        </section>
-    </main>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Kitchen Exchange. Tous droits réservés.</p>
+            </div>
+        </div>
+    </footer>
 
-    <script type="module" src="./voice-recorder.js"></script>
-    <script type="module">
-        import { Omk } from './modules/omk.js';
-
-        const KEY_INDENTITY = "gyNb6qkqdWSqX2kJD1z4cwBkKEYC37fa"
-        const KEY_CREDENTIAL = "GQmwLHVXR4oJmhO792ty3GOnVda7oLqA"
-        const BASE_URL = "http://localhost/omk_thyp_25-26_clone"
-        const MAIL = "benakchaihab@gmail.com"
-        let omkClient = new Omk({
-            mail: MAIL,
-            api: `${BASE_URL}/api/`,
-            ident: KEY_INDENTITY,
-            key: KEY_CREDENTIAL,
-            vocabs: ['ke', 'dcterms', 'foaf']
-        })
-
-        const INGREDIENT_CLASS_ID = 121;
-        const RECIPE_CLASS_ID = 116;
-
-        function showMessage(text, time = 3000) {
-            const t = document.createElement('div');
-            t.className = 'toast';
-            t.textContent = text;
-            document.body.appendChild(t);
-            setTimeout(() => t.style.opacity = '0.95', 10);
-            setTimeout(() => {
-                t.style.transition = 'all .25s ease';
-                t.style.opacity = '0';
-                t.style.transform = 'translateY(6px)';
-            }, time - 250);
-            setTimeout(() => t.remove(), time);
-        }
-
-        async function fillIngredientsTable() {
-            try {
-                const resp = await fetch(`${BASE_URL}/api/items?resource_class_id=${INGREDIENT_CLASS_ID}&key_identity=${KEY_INDENTITY}&key_credential=${KEY_CREDENTIAL}`);
-                const data = await resp.json();
-                const tbody = d3.select("#ingredientList");
-                tbody.selectAll("tr").remove();
-                data.forEach(item => {
-                    const row = tbody.append("tr");
-                    row.append("td").text(item['o:id']);
-                    row.append("td").text(item['ke:name'] ? item['ke:name'][0]['@value'] : 'No name');
-                    row.append("td").html(`<button class="btn btn-ghost btnDeleteIngredient" data-id="${item['o:id']}">Delete</button>`);
-                });
-
-                fillIngredientCheckboxes(data);
-            } catch (error) {
-                console.error("Error fetching ingredients:", error);
-                showMessage('Error loading ingredients');
-            }
-        }
-
-        // populate checkboxes as chips for recipe creation
-        function fillIngredientCheckboxes(items) {
-            const container = d3.select("#ingredients-checkboxes");
-            container.selectAll("*").remove();
-            items.forEach(item => {
-                const id = item['o:id'];
-                const name = (item['ke:name'] && item['ke:name'][0] && item['ke:name'][0]['@value']) ? item['ke:name'][0]['@value'] : `#${id}`;
-                const chip = container.append('label').attr('class', 'chip').attr('for', `ing-${id}`);
-                chip.append('input')
-                    .attr('type', 'checkbox')
-                    .attr('id', `ing-${id}`)
-                    .attr('data-id', id)
-                    .style('accent-color', '#2b7a78');
-                chip.append('span').text(name);
-            });
-        }
-
-        fillIngredientsTable();
-
-        d3.select("#btnCreateIngredient").on("click", createIngredient);
-        d3.select("#btnCreateRecipe").on("click", createRecipe);
-        d3.select("#refreshAll").on("click", () => { fillIngredientsTable(); fillRecipesTable(); showMessage('Refreshed'); });
-        d3.select("#btnClearRecipe").on("click", () => {
-            d3.select("#recipe").property("value", "");
-            d3.select("#steps").property("value", "");
-            d3.selectAll("#ingredients-checkboxes input[type=checkbox]").property("checked", false);
-        });
-
-        async function createIngredient() {
-            const btn = document.getElementById('btnCreateIngredient');
-            const ingredientName = d3.select("#ingredient").property("value").trim();
-            if (!ingredientName) return showMessage('Provide an ingredient name');
-
-            btn.disabled = true;
-            btn.textContent = 'Creating...';
-
-            const data = {};
-            data['o:resource_class'] = "ke:Ingredient";
-            data['o:resource_template'] = "Ingredient";
-            // Pass plain string - formatData will convert to proper Omeka format
-            data['ke:name'] = [ingredientName];
-
-            try {
-                const item = await createItem(data);
-                // omkClient.createItem might return created item
-                const tbody = d3.select("#ingredientList");
-                const row = tbody.append("tr");
-                row.append("td").text(item['o:id']);
-                row.append("td").text(item['ke:name'] ? item['ke:name'][0]['@value'] : ingredientName);
-                row.append("td").html(`<button class="btn btn-ghost btnDeleteIngredient" data-id="${item['o:id']}">Delete</button>`);
-                // add to checkboxes quickly
-                const container = d3.select("#ingredients-checkboxes");
-                const chip = container.append('label').attr('class', 'chip').attr('for', `ing-${item['o:id']}`);
-                chip.append('input').attr('type', 'checkbox').attr('id', `ing-${item['o:id']}`).attr('data-id', item['o:id']).style('accent-color', '#2b7a78');
-                chip.append('span').text(item['ke:name'] ? item['ke:name'][0]['@value'] : ingredientName);
-
-                d3.select("#ingredient").property("value", "");
-                showMessage('Ingredient created');
-            } catch (err) {
-                console.error("Create ingredient failed:", err);
-                showMessage('Failed to create ingredient');
-            } finally {
-                btn.disabled = false;
-                btn.textContent = 'Create';
-            }
-        }
-
-        async function deleteIngredient(itemId) {
-            try {
-                await deleteItem(itemId);
-                showMessage('Ingredient deleted');
-                // update UI
-                d3.select(`#ingredientList button[data-id="${itemId}"]`).node()?.closest('tr')?.remove();
-                // remove checkbox
-                const cb = document.querySelector(`#ing-${itemId}`);
-                if (cb) cb.closest('label')?.remove();
-            } catch (e) {
-                console.error(e);
-                showMessage('Done');
-                // still refresh to be safe
-                fillIngredientsTable();
-            }
-        }
-
-        async function deleteRecipe(itemId) {
-            try {
-                await deleteItem(itemId);
-                showMessage('Recipe deleted');
-                // update UI
-                d3.select(`#recipeList button[data-id="${itemId}"]`).node()?.closest('tr')?.remove();
-                // remove checkbox
-                const cb = document.querySelector(`#ing-${itemId}`);
-                if (cb) cb.closest('label')?.remove();
-            } catch (e) {
-                console.error(e);
-                showMessage('Done');
-                // still refresh to be safe
-                fillRecipesTable();
-            }
-        }
-
-        // delegate delete clicks
-        d3.select("body").on("click", function (event) {
-            if (event.target.classList && event.target.classList.contains("btnDeleteIngredient")) {
-                const itemId = event.target.getAttribute("data-id");
-                deleteIngredient(itemId);
-            } else if (event.target.classList && event.target.classList.contains("btnDeleteRecipe")) {
-                const itemId = event.target.getAttribute("data-id");
-                deleteRecipe(itemId);
-            }
-        });
-
-        async function createRecipe() {
-            const btn = document.getElementById('btnCreateRecipe');
-            const title = d3.select("#recipe").property("value").trim();
-            const steps = d3.select("#steps").property("value").trim();
-            if (!title) return showMessage('Provide a recipe name');
-            const formData = {};
-            formData['o:resource_class'] = "ke:Recipe";
-            formData['o:resource_template'] = "Recipe";
-            formData['ke:name'] = [title];
-            formData['ke:steps'] = [steps];
-
-            btn.disabled = true;
-            btn.textContent = 'Creating...';
-            try {
-                const item = await createItem(formData);
-                showMessage('Recipe created');
-                // quick append to recipe list
-                const tbody = d3.select("#recipeList");
-                const row = tbody.append("tr");
-                row.append("td").text(item['o:id']);
-                row.append("td").text(item['o:title'] ? item['o:title'] : title);
-                row.append("td").html(`<button class="btn btn-ghost btnDeleteRecipe" data-id="${item['o:id']}">Delete</button>`);
-                // clear form
-                d3.select("#recipe").property("value", "");
-                d3.select("#steps").property("value", "");
-                d3.selectAll("#ingredients-checkboxes input[type=checkbox]").property("checked", false);
-            } catch (err) {
-                console.error("Create recipe failed:", err);
-                showMessage('Failed to create recipe');
-            } finally {
-                btn.disabled = false;
-                btn.textContent = 'Create Recipe';
-            }
-        }
-
-        async function fillRecipesTable() {
-            try {
-                // fetch recipes - adjust resource_class_id if needed
-                const resp = await fetch(`${BASE_URL}/api/items?resource_class_id=${RECIPE_CLASS_ID}&key_identity=${KEY_INDENTITY}&key_credential=${KEY_CREDENTIAL}`);
-                const data = await resp.json();
-                const tbody = d3.select("#recipeList");
-                tbody.selectAll("tr").remove();
-                data.forEach(item => {
-                    // simple filtering by resource class label (if present) or by template
-                    const title = item['ke:name'] ? item['ke:name'][0]['@value'] : (item['o:id'] || 'No title');
-                    const row = tbody.append("tr");
-                    row.append("td").text(item['o:id']);
-                    row.append("td").text(title);
-                    row.append("td").html(`<button class="btn btn-ghost btnDeleteRecipe" data-id="${item['o:id']}">Delete</button>`);
-                });
-            } catch (e) {
-                console.error(e);
-                showMessage('Error loading recipes');
-                fillRecipesTable();
-            }
-        }
-
-        // wrapper calling omkClient.createItem if available, otherwise fallback to fetch
-        function createItem(data, cb) {
-            if (omkClient && typeof omkClient.createItem === 'function') {
-                return new Promise((resolve, reject) => {
-                    try {
-                        omkClient.createItem(data, (item) => {
-                            if (cb) cb(item);
-                            resolve(item);
-                        });
-                    } catch (err) { reject(err); }
-                });
-            } else {
-                // fallback: call API directly (you may need to format the data as Omeka expects)
-                return fetch(`${BASE_URL}/api/items?key_identity=${KEY_INDENTITY}&key_credential=${KEY_CREDENTIAL}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                }).then(r => r.json());
-            }
-        }
-
-        function deleteItem(itemId, cb) {
-            return fetch(`${BASE_URL}/api/items/${itemId}?key_identity=${KEY_INDENTITY}&key_credential=${KEY_CREDENTIAL}`, {
-                method: 'DELETE'
-            })
-                .then(response => {
-                    if (response.ok || response.status === 204) {
-                        if (cb) cb(response);
-                        return response;
-                    } else {
-                        if (response.status === 500 && cb) cb(response);
-                        throw new Error('Done: ' + response.status);
-                    }
-                });
-        }
-
-        // initial recipes load
-        fillRecipesTable();
-    </script>
+    <script src="js/nav.js"></script>
+    <script type="module" src="js/home.js"></script>
 </body>
 
 </html>

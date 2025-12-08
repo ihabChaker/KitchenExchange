@@ -61,12 +61,20 @@ export class Omk {
         }
 
         this.getClassByName = function (cl) {
-            let c = me.class.filter(c => c['o:label'].toLowerCase() == cl.toLowerCase());
+            // Allow passing an object {o:id}, a numeric id, or a name string
+            if (typeof cl === 'object' && cl['o:id']) return me.class.filter(c => c['o:id'] == cl['o:id'])[0];
+            if (typeof cl === 'number') return me.class.filter(c => c['o:id'] == cl)[0];
+            let term = (cl === undefined || cl === null) ? '' : String(cl).toLowerCase();
+            let c = me.class.filter(c => (c['o:label'] || '').toLowerCase() == term);
             return c[0];
         }
 
         this.getClassByTerm = function (cl) {
-            let c = me.class.filter(c => c['o:term'].toLowerCase() == cl.toLowerCase());
+            // Allow passing an object {o:id}, a numeric id, or a term string
+            if (typeof cl === 'object' && cl['o:id']) return me.class.filter(c => c['o:id'] == cl['o:id'])[0];
+            if (typeof cl === 'number') return me.class.filter(c => c['o:id'] == cl)[0];
+            let term = (cl === undefined || cl === null) ? '' : String(cl).toLowerCase();
+            let c = me.class.filter(c => (c['o:term'] || '').toLowerCase() == term);
             return c[0];
         }
 
@@ -206,6 +214,26 @@ export class Omk {
             //}, 100);
         }
 
+        // Compatibility wrapper: getItems accepts an object or query string and returns items (single page)
+        this.getItems = async function (opts) {
+            let query = '';
+            if (!opts) opts = '';
+            if (typeof opts === 'string') query = opts;
+            else if (typeof opts === 'object') {
+                // build query string from object
+                query = Object.keys(opts).map(k => encodeURIComponent(k) + '=' + encodeURIComponent(opts[k])).join('&');
+            }
+            let url = me.api + 'items' + (query ? ('?' + query) : '');
+            // perform synchronous request (module uses syncRequest) and return as resolved Promise
+            try {
+                const rs = syncRequest(url);
+                return rs;
+            } catch (e) {
+                console.error('getItems error', e);
+                return [];
+            }
+        }
+
         this.getAllMedias = function (query, cb = false) {
             let url = me.api + 'media?per_page=' + perPage + '&' + query + '&page=', fin = false, rs = [], data, page = 1;
             while (!fin) {
@@ -241,7 +269,7 @@ export class Omk {
 
         }
 
-        this.createItem = function (data, cb = false, verifDoublons, file) {
+        this.createItem = function (data, file = null, cb = false, verifDoublons = null) {
             if (verifDoublons) {
                 let items = me.searchItems(verifDoublons);
                 if (items.length) {
@@ -250,10 +278,36 @@ export class Omk {
                 }
             }
             let url = me.api + 'items?key_identity=' + me.ident + '&key_credential=' + me.key;
-            postData({ 'u': url, 'm': 'POST' }, me.formatData(data), file).then((rs) => {
+            // Return the promise so callers can await the created item
+            return postData({ 'u': url, 'm': 'POST' }, me.formatData(data), file).then((rs) => {
                 me.items[rs['o:id']] = rs;
                 if (cb) cb(rs);
+                return rs;
             });
+        }
+
+        this.deleteItem = async function (id, cb = false) {
+            let url = me.api + 'items/' + id + '?key_identity=' + me.ident + '&key_credential=' + me.key;
+            try {
+                const response = await fetch(url, {
+                    method: 'DELETE',
+                    mode: 'cors',
+                    credentials: 'same-origin'
+                });
+
+                if (response.ok) {
+                    // Remove from cache
+                    delete me.items[id];
+                    if (cb) cb(true);
+                    return true;
+                } else {
+                    throw new Error('Delete failed with status: ' + response.status);
+                }
+            } catch (error) {
+                console.error('Error deleting item:', error);
+                if (cb) cb(false);
+                throw error;
+            }
         }
 
         this.getConcept = async function (concept) {
@@ -281,19 +335,29 @@ export class Omk {
                         fd[k] = [{ 'o:id': v }];
                         break;
                     case 'o:resource_class':
-                        p = me.getClassByTerm(v);
-                        fd[k] = { 'o:id': p['o:id'] };
+                        // Accept either a term (e.g. 'ke:Post') or an object with {'o:id': id}
+                        if (typeof v === 'object' && v['o:id']) {
+                            fd[k] = { 'o:id': v['o:id'] };
+                        } else {
+                            p = me.getClassByTerm(v);
+                            fd[k] = { 'o:id': p['o:id'] };
+                        }
                         break;
                     case 'o:resource_template':
-                        p = me.rts.filter(rt => rt['o:label'] == v)[0];
-                        fd[k] = { 'o:id': p['o:id'] };
+                        // Accept either a template label, or an object with {'o:id': id}
+                        if (typeof v === 'object' && v['o:id']) {
+                            fd[k] = { 'o:id': v['o:id'] };
+                        } else {
+                            p = me.rts.filter(rt => rt['o:label'] == v)[0];
+                            fd[k] = { 'o:id': p['o:id'] };
+                        }
                         break;
                     case 'o:media':
                         if (!fd[k]) fd[k] = [];
                         fd[k].push({ "o:ingester": "url", "ingest_url": v });
                         break;
                     case 'file':
-                        fd['o:media'] = [{ "o:ingester": "upload", "file_index": "1" }];
+                        fd['o:media'] = [{ "o:ingester": "upload", "file_index": "0" }];
                         break;
                     case 'labels':
                         v.forEach(d => {
@@ -315,16 +379,29 @@ export class Omk {
             return fd;
         }
         function formatValue(p, v) {
-            if (typeof v === 'object' && v.rid)
-                return { "property_id": p['o:id'], "value_resource_id": v.rid, "type": "resource" };
-            else if (typeof v === 'object' && v.u)
-                return { "property_id": p['o:id'], "@id": v.u, "o:label": v.l, "type": "uri" };
-            else if (typeof v === 'object' && v.geo)
-                return { "property_id": p['o:id'], "@value": v.geo, "type": "geography:coordinates" };
-            else if (typeof v === 'object')
+            if (typeof v === 'object') {
+                // Resource by id (support different keys used across the codebase)
+                if (v.rid || v.value_resource_id || v.value_resource) {
+                    const id = v.rid || v.value_resource_id || v.value_resource;
+                    return { "property_id": p['o:id'], "value_resource_id": id, "type": "resource" };
+                }
+                // Literal object already shaped with @value
+                if (v.hasOwnProperty('@value')) {
+                    return { "property_id": p['o:id'], "@value": v['@value'], "type": (v.type || 'literal') };
+                }
+                // URI value
+                if (v.u) {
+                    const out = { "property_id": p['o:id'], "@id": v.u, "type": "uri" };
+                    if (v.l) out['o:label'] = v.l;
+                    return out;
+                }
+                // Geography coordinate
+                if (v.geo) return { "property_id": p['o:id'], "@value": v.geo, "type": "geography:coordinates" };
+                // Fallback: store JSON string of the object
                 return { "property_id": p['o:id'], "@value": JSON.stringify(v), "type": "literal" };
-            else
+            } else {
                 return { "property_id": p['o:id'], "@value": v, "type": "literal" };
+            }
         }
 
         async function postData(url, data = {}, file) {
@@ -342,7 +419,8 @@ export class Omk {
                 if (file) {
                     bodyData = new FormData();
                     bodyData.append('data', JSON.stringify(data));
-                    bodyData.append('file[1]', file);
+                    // Omeka expects files as file[0], file[1], ...; use file[0] for a single upload
+                    bodyData.append('file[0]', file);
                 } else {
                     bodyData = JSON.stringify(data);
                     options.headers = {
@@ -351,9 +429,31 @@ export class Omk {
                 }
                 options.body = bodyData;
             }
+            // Debug: if sending a file, log FormData contents (keys only)
+            if (file && bodyData instanceof FormData) {
+                try {
+                    console.log('postData: sending FormData with entries:');
+                    for (const pair of bodyData.entries()) {
+                        // For file entries, show the name and type but not the binary
+                        if (pair[0].startsWith('file')) {
+                            const f = pair[1];
+                            console.log(pair[0], f && f.name ? `${f.name} (${f.type}, ${f.size} bytes)` : pair[1]);
+                        } else {
+                            console.log(pair[0], pair[1]);
+                        }
+                    }
+                } catch (e) {
+                    console.log('postData: could not enumerate FormData', e);
+                }
+            } else {
+                console.log('postData: sending JSON payload', data);
+            }
+
             const response = await fetch(url.u, options);
             me.loader.hide(true);
-            return response.json(); // parses JSON response into native JavaScript objects
+            const json = await response.json(); // parses JSON response into native JavaScript objects
+            console.log('postData: response', json);
+            return json;
         }
 
         this.getSiteViewRequest = function (q, cb) {

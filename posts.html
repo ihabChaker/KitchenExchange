@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Publications - Kitchen Exchange</title>
+    <link rel="stylesheet" href="main.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"
+        integrity="sha512-vc58qvvBdrDR4etbxMdlTt4GBQk1qjvyORR2nrsPsFPyrs+/u5c3+1Ct6upOgdZoIl7eq6k3a1UPDSNAQi/32A=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <style>
+        .posts-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        .post-card {
+            background: var(--card);
+            padding: 24px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 24px;
+        }
+
+        .post-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .post-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--accent);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 20px;
+        }
+
+        .post-author-info {
+            flex: 1;
+        }
+
+        .post-author {
+            font-weight: 700;
+            color: var(--accent-2);
+        }
+
+        .post-date {
+            font-size: 13px;
+            color: var(--muted);
+        }
+
+        .post-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--accent);
+        }
+
+        .post-content {
+            color: var(--accent-2);
+            line-height: 1.8;
+            margin-bottom: 16px;
+        }
+
+        .post-actions {
+            display: flex;
+            gap: 16px;
+            padding-top: 16px;
+            border-top: 2px solid var(--bg);
+        }
+
+        .post-action-btn {
+            background: transparent;
+            border: none;
+            color: var(--muted);
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 12px;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .post-action-btn:hover {
+            background: var(--bg);
+            color: var(--accent);
+        }
+
+        .share-menu {
+            position: relative;
+        }
+
+        .share-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: var(--card);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-lg);
+            padding: 8px;
+            display: none;
+            z-index: 100;
+            min-width: 150px;
+        }
+
+        .share-dropdown.active {
+            display: block;
+        }
+
+        .share-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+            white-space: nowrap;
+        }
+
+        .share-option:hover {
+            background: var(--bg);
+        }
+
+        .create-post-card {
+            background: var(--card);
+            padding: 24px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 32px;
+        }
+
+        .create-post-input {
+            width: 100%;
+            min-height: 60px;
+            border: 2px solid var(--bg);
+            border-radius: var(--radius);
+            padding: 12px;
+            font-family: inherit;
+            font-size: 16px;
+            resize: vertical;
+            margin-bottom: 12px;
+        }
+
+        .create-post-input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .create-post-actions {
+            display: flex;
+            justify-content: flex-end;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <span class="logo-icon">🍳</span>
+                <span class="logo-text">Kitchen Exchange</span>
+            </a>
+            <ul class="nav-menu">
+                <li><a href="index.html">Accueil</a></li>
+                <li><a href="recipes.html">Recettes</a></li>
+                <li><a href="posts.html" class="active">Publications</a></li>
+                <li><a href="chatbot.html">Assistant</a></li>
+                <li><a href="admin.html">Admin</a></li>
+            </ul>
+            <div class="nav-actions">
+                <a href="auth.html" class="btn-ghost">Connexion</a>
+                <a href="add-recipe.html" class="btn-primary">Ajouter une recette</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-main" style="padding-top: 32px; padding-bottom: 80px;">
+        <div class="posts-header">
+            <h1 style="font-size: 36px;">Publications</h1>
+        </div>
+
+        <!-- Create Post -->
+        <div class="create-post-card">
+            <h3 style="margin-bottom: 16px;">✍️ Partager une publication</h3>
+            <form id="createPostForm">
+                <input type="text" class="create-post-input" id="postTitle" placeholder="Titre de votre publication"
+                    required style="min-height: 40px; margin-bottom: 12px;">
+                <textarea class="create-post-input" id="postContent"
+                    placeholder="Quoi de neuf ? Partagez vos astuces culinaires..." required></textarea>
+                <div class="create-post-actions">
+                    <button type="submit" class="btn-primary" id="publishBtn">Publier</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Posts Feed -->
+        <div id="postsFeed">
+            <div class="loading" style="text-align: center; padding: 40px;">
+                Chargement des publications...
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container-main">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Kitchen Exchange</h4>
+                    <p>Votre plateforme de partage de recettes culinaires</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Navigation</h4>
+                    <ul>
+                        <li><a href="index.html">Accueil</a></li>
+                        <li><a href="recipes.html">Recettes</a></li>
+                        <li><a href="posts.html">Publications</a></li>
+                        <li><a href="admin.html">Administration</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Kitchen Exchange. Tous droits réservés.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/nav.js"></script>
+    <script type="module" src="js/posts.js"></script>
+</body>
+
+</html>

@@ -47,6 +47,16 @@ ke:RecipeIngredient a rdfs:Class ;
     rdfs:domain o:Resource ;
     vs:term_status "experimental" .
 
+ke:ChatSession a rdfs:Class ;
+    rdfs:label "ChatSession" ;
+    rdfs:domain o:Resource ;
+    vs:term_status "experimental" .
+
+ke:ChatMessage a rdfs:Class ;
+    rdfs:label "ChatMessage" ;
+    rdfs:domain o:Resource ;
+    vs:term_status "experimental" .
+
 ke:firstName a rdf:Property ;
     rdfs:label "First Name" ;
     rdfs:domain ke:User ;
@@ -190,4 +200,37 @@ ke:quantity a rdf:Property ;
 ke:note a rdf:Property ;
     rdfs:label "Note" ;
     rdfs:domain ke:RecipeIngredient ;
+    vs:term_status "experimental" .
+
+ke:content a rdf:Property ;
+    rdfs:label "Content" ;
+    rdfs:domain ke:ChatMessage ;
+    vs:term_status "experimental" .
+
+ke:role a rdf:Property ;
+    rdfs:label "Role" ;
+    rdfs:domain ke:ChatMessage ;
+    vs:term_status "experimental" .
+
+ke:belongsToSession a rdf:Property ;
+    rdfs:label "Belongs To Session" ;
+    rdfs:domain ke:ChatMessage ;
+    rdfs:range ke:ChatSession ;
+    vs:term_status "experimental" .
+
+ke:belongsToUser a rdf:Property ;
+    rdfs:label "Belongs To User" ;
+    rdfs:domain ke:ChatSession ;
+    rdfs:range ke:User ;
+    vs:term_status "experimental" .
+
+ke:threadSlug a rdf:Property ;
+    rdfs:label "Thread Slug" ;
+    rdfs:domain ke:ChatSession ;
+    vs:term_status "experimental" .
+
+ke:hasVoiceRecording a rdf:Property ;
+    rdfs:label "Has Voice Recording" ;
+    rdfs:domain ke:ChatMessage ;
+    rdfs:range o:Media ;
     vs:term_status "experimental" .

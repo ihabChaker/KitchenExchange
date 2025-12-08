@@ -115,6 +115,7 @@ if (navigator.mediaDevices.getUserMedia) {
         audio.src = audioURL;
         console.log("recorder stopped");
 
+        // Save audio blob to OMK with correct parameter order
         saveToOmk(blob, mediaRecorder.mimeType);
 
         deleteButton.onclick = function (e) {
@@ -209,8 +210,9 @@ async function saveToOmk(audioBlob, fileType) {
     };
     //save image to omeka
     console.log(audioBlob)
-    omk.createItem(data, i => {
+    // Correct parameter order: createItem(data, file, callback, verifDoublons)
+    omk.createItem(data, audioBlob, (i) => {
         console.log(i);
-    }, false, audioBlob);
+    }, null);
 
 }

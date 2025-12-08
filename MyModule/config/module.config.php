@@ -1,6 +1,20 @@
 <?php
 
 return [
+    'entity_manager' => [
+        'mapping_classes_paths' => [
+            dirname(__DIR__) . '/src/Entity',
+        ],
+        'proxy_paths' => [
+            dirname(__DIR__) . '/data/doctrine-proxies',
+        ],
+    ],
+    'service_manager' => [
+        'factories' => [
+            'MyModule\AnythingLLMService' => 'MyModule\Service\AnythingLLMServiceFactory',
+            'MyModule\OmekaDataExporter' => 'MyModule\Service\OmekaDataExporterFactory',
+        ],
+    ],
     'view_manager' => [
         'template_path_stack' => [
             'mymodule' => OMEKA_PATH . '/modules/MyModule/view',
@@ -11,33 +25,21 @@ return [
     ],
     'controllers' => [
         'invokables' => [
-            'MyModule\Controller\Chat' => 'MyModule\Controller\ChatController',
+            'MyModule\Controller\Sync' => 'MyModule\Controller\SyncController',
         ],
     ],
     'router' => [
         'routes' => [
             'admin' => [
                 'child_routes' => [
-                    'mymodule-chat' => [
+                    'mymodule-sync' => [
                         'type' => \Laminas\Router\Http\Literal::class,
                         'options' => [
-                            'route' => '/chat',
+                            'route' => '/mymodule/sync',
                             'defaults' => [
                                 '__NAMESPACE__' => 'MyModule\Controller',
-                                'controller' => 'Chat',
-                                'action' => 'index',
-                            ],
-                        ],
-                        'may_terminate' => true,
-                        'child_routes' => [
-                            'query' => [
-                                'type' => \Laminas\Router\Http\Literal::class,
-                                'options' => [
-                                    'route' => '/query',
-                                    'defaults' => [
-                                        'action' => 'query',
-                                    ],
-                                ],
+                                'controller' => 'Sync',
+                                'action' => 'sync',
                             ],
                         ],
                     ],
@@ -48,10 +50,10 @@ return [
     'navigation' => [
         'AdminModule' => [
             [
-                'label' => 'LLM Chat',
-                'route' => 'admin/mymodule-chat',
-                'resource' => 'MyModule\Controller\Chat',
-                'privilege' => 'index',
+                'label' => 'Sync to RAG',
+                'route' => 'admin/mymodule-sync',
+                'resource' => 'MyModule\Controller\Sync',
+                'privilege' => 'sync',
             ],
         ],
     ],
