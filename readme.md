@@ -111,28 +111,25 @@ Kitchen Exchange est une plateforme web complète permettant la gestion et la d�
 ### Schéma Entité-Relation
 
 ```mermaid
----
-config:
-  layout: elk
-  look: classic
----
 erDiagram
     User ||--o{ Recipe : creates
     User ||--o{ Post : creates
-    Recipe ||--o{ Recipe_Ingredient : has
-    Ingredient ||--o{ Recipe_Ingredient : in
+    User ||--o{ ChatSession : owns
+    Recipe ||--o{ RecipeIngredient : has
+    Ingredient ||--o{ RecipeIngredient : used-in
     User ||--o{ Rating : gives
     Recipe ||--o{ Rating : receives
+    ChatSession ||--o{ ChatMessage : contains
 
     User {
         int id PK
-        string first_name
-        string last_name
+        string firstName
+        string lastName
         string email
         string password
     }
   
-    Social_Media_Link {
+    SocialMediaLink {
         int id PK
         string name
         string link
@@ -142,58 +139,56 @@ erDiagram
     Recipe {
         int id PK
         string name
-        string image_path
+        string imagePath
         string description
         string steps
-        int user_id
-        int preparation_time
-        int cooking_time
+        int userId FK
+        int preparationTime
+        int cookingTime
         int calories
         int difficulty
     }
   
     Rating {
-        int user_id
-        int recipe_id
+        int userId FK
+        int recipeId FK
         int value
     }
   
     Post {
         int id PK
-        int user_id
+        int userId FK
         string content
+        datetime created
     }
   
     Ingredient {
         int id PK
         string name
-        string nutri_infos
-        bool is_healthy
+        string nutriInfos
+        bool isHealthy
     }
   
-    Recipe_Ingredient {
-        int recipe_id
-        int ingredient_id
-    Recipe_Ingredient {
-        int recipe_id
-        int ingredient_id
+    RecipeIngredient {
+        int recipeId FK
+        int ingredientId FK
         string quantity
         string note
     }
 
     ChatSession {
         int id PK
-        int user_id FK
-        string thread_slug
+        int userId FK
+        string threadSlug
         datetime created
     }
 
     ChatMessage {
         int id PK
-        int session_id FK
+        int sessionId FK
         string content
         string role
-        int media_id FK
+        int mediaId FK
     }
 ```
 

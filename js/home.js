@@ -185,9 +185,39 @@ function getPropertyValue(item, propertyTerm) {
 }
 
 function getMediaUrl(item) {
-    if (!item || !item['o:media'] || item['o:media'].length === 0) return null;
-    const media = item['o:media'][0];
-    return media['o:original_url'] || media['@id'];
+    // First try thumbnail_display_urls (most reliable)
+    if (item && item['thumbnail_display_urls'] && item['thumbnail_display_urls']['large']) {
+        return item['thumbnail_display_urls']['large'];
+    }
+
+    // Then try o:primary_media
+    if (item && item['o:primary_media'] && item['o:primary_media']['o:id']) {
+        try {
+            const mediaObj = omk.getMedia(item['o:primary_media']['o:id']);
+            if (mediaObj && mediaObj['o:original_url']) {
+                return mediaObj['o:original_url'];
+            }
+        } catch (e) {
+            console.error('Error loading primary media:', e);
+        }
+    }
+
+    // Fallback to first media item
+    if (item && item['o:media'] && item['o:media'].length > 0) {
+        const media = item['o:media'][0];
+        if (media['o:original_url']) {
+            return media['o:original_url'];
+        } else if (media['o:id']) {
+            try {
+                const mediaObj = omk.getMedia(media['o:id']);
+                return mediaObj['o:original_url'] || null;
+            } catch (e) {
+                console.error('Error loading media:', e);
+                return null;
+            }
+        }
+    }
+    return null;
 }
 
 // Initialize page
