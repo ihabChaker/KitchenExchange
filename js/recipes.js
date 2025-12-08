@@ -3,9 +3,9 @@ import { Omk } from '../modules/omk.js';
 // Initialize Omeka client
 const omk = new Omk({
     api: 'http://localhost/omk_thyp_25-26_clone/api/',
-    ident: 'q94woTAaTNH186HmJ4F6ykBecD1KAEfI',
-    key: 'mCR2PBA6Us9gTZ4d6EuPdKsARjKIPxmz',
-    mail: 'benakchaihab@gmail.com',
+    ident: 'neecG2mXbk1MDcdL4t2vnYx3BxtVL0OM',
+    key: 'KrpZ7cl2tRCoYhpIC7zVkbLOpSKONsPx',
+    mail: 'samuel.szoniecky@univ-paris8.fr',
     vocabs: ['ke', 'dcterms', 'foaf']
 });
 
