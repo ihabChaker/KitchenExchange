@@ -83,7 +83,6 @@ Kitchen Exchange est une plateforme web complète permettant la gestion et la d�
   - Suppression avec gestion d'erreurs
 - **Enregistrements vocaux** :
   - Accès aux messages vocaux
-  - Gestion et suppression
 
 #### Statistiques & Analytics
 - **Dashboard** avec métriques en temps réel :
@@ -91,7 +90,6 @@ Kitchen Exchange est une plateforme web complète permettant la gestion et la d�
   - Nombre d'utilisateurs actifs
   - Publications partagées
   - Ingrédients disponibles
-  - Messages enregistrés
 
 #### Configuration Système
 - **Paramètres AnythingLLM** :
@@ -212,101 +210,71 @@ erDiagram
 - `ke:threadSlug`, `ke:belongsToUser` (pour ChatSession)
 - `ke:hasVoiceRecording` - Lien vers média audio
 
-## 🚀 Installation & Configuration
+## ⚙️ Configuration
 
-### Prérequis
+### Configuration Omeka S
 
-- **Serveur Web** (Apache/Nginx)
-- **PHP 7.4+** avec extensions requises par Omeka S
-- **MySQL/MariaDB**
-- **Omeka S** installé et configuré
-- **Node.js 16+** (pour AnythingLLM)
-- **Python 3.8+** (pour Whisper API)
+1. **Clés API Omeka S:**
+   - Dans Omeka S, aller à **User** → **API Keys**
+   - Générer une nouvelle clé API
+   - Noter l'`identity` et le `credential`
+   - Mettre à jour les fichiers JavaScript avec ces identifiants
 
-### Étape 1: Configuration Omeka S
+2. **MyModule pour la synchronisation RAG:**
+   - Installer le module MyModule dans Omeka S: [https://github.com/ihabChaker/MyModule](https://github.com/ihabChaker/MyModule)
+   - Aller dans **Omeka S Admin** → **MyModule** → **Sync to RAG**
+   - Configurer:
+     - Sélectionner les types de ressources à synchroniser (Recipe, Ingredient, User, Post)
+     - Choisir les ItemSets (optionnel)
+     - Lancer le job de synchronisation
 
-1. **Installer le vocabulaire personnalisé:**
-   ```bash
-   # Importer assets/vocab.ttl dans Omeka S
-   # Via: Administration → Vocabularies → Import
-   ```
+### Configuration de l'Interface Admin
 
-2. **Importer les Resource Templates:**
-   ```bash
-   # Importer tous les fichiers JSON depuis assets/rt/
-   # Recipe.json, Ingredient.json, User.json, Post.json
-   # ChatSession.json, ChatMessage.json, etc.
-   ```
+Accéder à `admin.html` et configurer les services externes:
 
-3. **Installer MyModule:**
-   ```bash
-   sudo cp -r MyModule /var/www/html/omeka-s/modules/
-   # Activer le module dans Omeka S admin
-   ```
+#### 1. AnythingLLM (Assistant IA)
+- **API URL**: URL de votre instance AnythingLLM (ex: `http://localhost:3001/api`)
+- **API Key**: Clé d'authentification AnythingLLM
+- **Workspace Slug**: Nom du workspace (ex: `kitchen-exchange`)
 
-4. **Créer les clés API:**
-   - Aller dans Omeka S → User → API Keys
-   - Générer une nouvelle clé
-   - Noter l'identity et le credential
+**Où obtenir ces informations:**
+- Installer AnythingLLM: [https://github.com/Mintplex-Labs/anything-llm](https://github.com/Mintplex-Labs/anything-llm)
+- Créer un workspace
+- Générer une clé API dans les paramètres AnythingLLM
 
-### Étape 2: Installation AnythingLLM
+#### 2. Whisper Transcription (Messages Vocaux)
+- **Whisper Transcription Endpoint**: URL du serveur Whisper (ex: `http://localhost:8000/transcribe`)
 
-```bash
-# Installer AnythingLLM
-git clone https://github.com/Mintplex-Labs/anything-llm.git
-cd anything-llm
-npm install
-npm run dev
+**API de transcription:**
+- Utiliser cette API Whisper FastAPI: [https://github.com/ihabChaker/Whisper-transcription-api](https://github.com/ihabChaker/Whisper-transcription-api)
+- Démarrer le serveur selon les instructions du repository
+- L'endpoint sera disponible sur `http://localhost:8000/transcribe`
 
-# L'API sera disponible sur http://localhost:3001
-```
+#### 3. Sauvegarder la Configuration
+- Cliquer sur **"💾 Enregistrer la configuration"**
+- Les paramètres sont stockés dans le localStorage du navigateur
 
-**Configuration:**
-1. Créer un workspace nommé `kitchen-exchange`
-2. Générer une clé API
-3. Configurer un LLM (GPT-4, Claude, Ollama, etc.)
+### Configuration des Identifiants API
 
-### Étape 3: Installation Whisper API
+Mettre à jour les identifiants Omeka S dans les fichiers JavaScript principaux:
 
-```bash
-# Installer les dépendances Python
-pip install fastapi uvicorn openai-whisper python-multipart
+**Fichiers à configurer:**
+- `js/chat.js`
+- `js/admin.js`
+- `js/add-recipe.js`
+- `js/recipe-detail.js`
+- `js/posts.js`
+- `js/auth.js`
 
-# Démarrer le serveur
-python whisper_server_fixed.py
-
-# L'API sera disponible sur http://localhost:8000
-```
-
-### Étape 4: Configuration du Frontend
-
-1. **Mettre à jour les credentials dans les fichiers JS:**
-   ```javascript
-   // js/chat.js, js/admin.js, etc.
-   const omk = new Omk({
-       api: 'http://localhost/omeka-s/api/',
-       ident: 'VOTRE_KEY_IDENTITY',
-       key: 'VOTRE_KEY_CREDENTIAL',
-       mail: 'votre.email@example.com',
-       vocabs: ['ke', 'dcterms', 'foaf']
-   });
-   ```
-
-2. **Configurer AnythingLLM via l'interface admin:**
-   - Ouvrir `admin.html`
-   - Onglet "Settings"
-   - Remplir:
-     - API URL: `http://localhost:3001/api`
-     - API Key: Votre clé AnythingLLM
-     - Workspace Slug: `kitchen-exchange`
-     - Whisper Endpoint: `http://localhost:8000/transcribe`
-   - Sauvegarder
-
-### Étape 5: Import des Données Initiales (Optionnel)
-
-```bash
-# Importer les données de test depuis assets/csv/
-# Via: Omeka S → CSV Import module
+**Exemple de configuration:**
+```javascript
+const omk = new Omk({
+    api: 'http://localhost/omeka-s/api/',
+    ident: 'VOTRE_KEY_IDENTITY',      // ← Remplacer
+    key: 'VOTRE_KEY_CREDENTIAL',      // ← Remplacer
+    mail: 'votre.email@example.com',  // ← Remplacer
+    vocabs: ['ke', 'dcterms', 'foaf']
+});
 ```
 
 ## 📖 Guide d'Utilisation
@@ -391,8 +359,6 @@ L'IA utilise un système de références pour lier ses réponses aux données Om
 
 - `RECIPE-123` → Lien vers `recipe-detail.html?id=123` 🍳
 - `INGREDIENT-45` → Référence à un ingrédient 🥕
-- `USER-7` → Référence à un utilisateur 👤
-- `POST-89` → Lien vers une publication 📝
 
 Ces références sont automatiquement détectées et converties en liens cliquables.
 
